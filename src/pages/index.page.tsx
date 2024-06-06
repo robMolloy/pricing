@@ -2,6 +2,24 @@ import { NumberInput, TextInput } from "@/components";
 import { Typography } from "@/components/Typography";
 import { useState } from "react";
 
+const DisplayData = (
+  p: { material: string; qty: number; formula: string } & (
+    | { leftUnit: string }
+    | { rightUnit: string }
+  ),
+) => {
+  return (
+    <div className="flex items-baseline gap-4">
+      <div className="tooltip" data-tip={p.formula}>
+        <button className="btn btn-circle btn-info">i</button>
+      </div>
+      <p className="text-xl">
+        {p.material}: {p.qty} m^3
+      </p>
+    </div>
+  );
+};
+
 export default function Home() {
   const [formData, setFormData] = useState({
     width: 10,
@@ -46,70 +64,47 @@ export default function Home() {
         <div className="flex-1">
           <h2>Amounts</h2>
 
-          <div className="flex items-baseline gap-4">
-            <div
-              className="tooltip"
-              data-tip="formData.width * formData.length * formData.excavationDepth"
-            >
-              <button className="btn btn-circle btn-info">i</button>
-            </div>
-            <p className="text-xl">
-              Excavation: {formData.width * formData.length * formData.excavationDepth} m^3
-            </p>
-          </div>
-
-          <div className="flex items-baseline gap-4">
-            <div
-              className="tooltip"
-              data-tip="formData.width * formData.length * formData.fillDepth"
-            >
-              <button className="btn btn-circle btn-info">i</button>
-            </div>
-            <p className="text-xl">
-              Fill: {formData.width * formData.length * formData.fillDepth} m^3
-            </p>
-          </div>
-
-          <div className="flex items-baseline gap-4">
-            <div className="tooltip" data-tip="formData.width * formData.length">
-              <button className="btn btn-circle btn-info">i</button>
-            </div>
-            <p className="text-xl">Stone: {formData.width * formData.length} m^2</p>
-          </div>
+          <DisplayData
+            formula="formData.width * formData.length * formData.excavationDepth"
+            qty={formData.width * formData.length * formData.excavationDepth}
+            material="Fill"
+            rightUnit="m^3"
+          />
+          <DisplayData
+            formula="formData.width * formData.length * formData.fillDepth"
+            qty={formData.width * formData.length * formData.fillDepth}
+            material="Fill"
+            rightUnit="m^3"
+          />
+          <DisplayData
+            formula="formData.width * formData.length"
+            qty={formData.width * formData.length}
+            material="Stone"
+            rightUnit="m^2"
+          />
         </div>
+
         <div className="flex-1">
           <h2>Costs</h2>
+          <DisplayData
+            formula="formData.width * formData.length * formData.excavationDepth * 50"
+            qty={formData.width * formData.length * formData.excavationDepth * 50}
+            material="Excavation"
+            leftUnit="£"
+          />
+          <DisplayData
+            formula="formData.width * formData.length * formData.fillDepth * 100"
+            qty={formData.width * formData.length * formData.fillDepth * 100}
+            material="Fill"
+            leftUnit="£"
+          />
 
-          <div className="flex items-baseline gap-4">
-            <div
-              className="tooltip"
-              data-tip="formData.width * formData.length * formData.excavationDepth * 50"
-            >
-              <button className="btn btn-circle btn-info">i</button>
-            </div>
-            <p className="text-xl">
-              Excavation: £{formData.width * formData.length * formData.excavationDepth * 50}
-            </p>
-          </div>
-
-          <div className="flex items-baseline gap-4">
-            <div
-              className="tooltip"
-              data-tip="formData.width * formData.length * formData.fillDepth * 100"
-            >
-              <button className="btn btn-circle btn-info">i</button>
-            </div>
-            <p className="text-xl">
-              Fill: £{formData.width * formData.length * formData.fillDepth * 100}
-            </p>
-          </div>
-
-          <div className="flex items-baseline gap-4">
-            <div className="tooltip" data-tip="formData.width * formData.length * 20">
-              <button className="btn btn-circle btn-info">i</button>
-            </div>
-            <p className="text-xl">Stone: £{formData.width * formData.length * 20} </p>
-          </div>
+          <DisplayData
+            formula="formData.width * formData.length * 20"
+            qty={formData.width * formData.length * 20}
+            material="Stone"
+            leftUnit="£"
+          />
         </div>
       </div>
       <h2>
