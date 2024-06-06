@@ -18,3 +18,5 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRICINGPENGUIN }}
           channelId: live
           projectId: pricingpenguin
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
