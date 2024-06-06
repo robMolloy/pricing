@@ -1,4 +1,4 @@
-import { NumberInput, TextInput } from "@/components";
+import { NumberInput } from "@/components";
 import { Typography } from "@/components/Typography";
 import { useState } from "react";
 
