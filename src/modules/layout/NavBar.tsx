@@ -35,9 +35,7 @@ const NavBarDropdown = (p: {
         className="dropdown-content z-[1] mt-1 rounded-box border bg-base-100 p-0 shadow"
         style={{ opacity: "0.94" }}
       >
-        <div className="max-h-[75vh] overflow-y-scroll rounded-box">
-          {p.children}
-        </div>
+        <div className="max-h-[75vh] overflow-y-scroll rounded-box">{p.children}</div>
       </div>
     </div>
   );
@@ -70,8 +68,14 @@ export const NavBar = (p: TNavbarProps) => {
           </NavBarDropdown>
         </div>
       </div>
-      {/* <div className="hidden w-full sm:flex">
-        {showTabsInBar && (
+      <div className="hidden w-full gap-4 sm:flex">
+        <Link className="btn" href={"/"}>
+          current
+        </Link>
+        <Link className="btn" href={"/backup"}>
+          backup
+        </Link>
+        {/* {showTabsInBar && (
           <>
             <NavBarDropdown label="Themes">
               <div className="p-2">
@@ -82,8 +86,8 @@ export const NavBar = (p: TNavbarProps) => {
             </NavBarDropdown>
           </>
         )}
-        <button className="btn opacity-0" disabled></button>
-      </div> */}
+        <button className="btn opacity-0" disabled></button> */}
+      </div>
     </div>
   );
 };
