@@ -69,14 +69,17 @@ export const NavBar = (p: TNavbarProps) => {
         </div>
       </div>
       <div className="hidden w-full gap-4 sm:flex">
-        <Link className="btn btn-ghost" href={"/"}>
+        <Link className="hover:underline" href={"/"}>
           current
         </Link>
-        <Link className="btn btn-ghost" href={"/data-driven"}>
+        <Link className="hover:underline" href={"/data-driven"}>
           data-driven
         </Link>
-        <Link className="btn btn-ghost" href={"/backup"}>
-          backup
+        <Link className="hover:underline" href={"/data-driven-loose-types"}>
+          data-driven-loose-types
+        </Link>
+        <Link className="hover:underline" href={"/data-driven-loose-types-state"}>
+          data-driven-loose-types-state
         </Link>
         {/* {showTabsInBar && (
           <>
