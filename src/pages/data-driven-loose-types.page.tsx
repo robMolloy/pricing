@@ -72,7 +72,7 @@ export default function Home() {
   return (
     <Typography>
       {dimensionKeys.map((dimensionName) => {
-        if (dimensionName in formData && formData[dimensionName])
+        if (dimensionName in formData && formData[dimensionName] !== undefined)
           return (
             <NumberInput
               key={dimensionName}
