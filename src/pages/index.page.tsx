@@ -21,23 +21,60 @@ const DisplayData = (
 };
 
 export default function Home() {
-  const [formData, setFormData] = useState({
-    width: 10,
-    length: 10,
-    excavationDepth: 0.2,
-    fillDepth: 0.3,
+  const [newDimension, setNewDimension] = useState("dsa");
+  const [newDimensionUnit, setNewDimensionUnit] = useState("m");
+
+  const [dimensions, setDimensions] = useState<{ [k: string]: { unit: string } }>({
+    width: {
+      unit: "m",
+    },
   });
+
+  const [formData, setFormData] = useState<{ [k in keyof typeof dimensions]: number }>({
+    width: 10,
+  });
+
+  // const [groups, setGroups] = useState([{ item: "width" }]);
   return (
     <Typography fullPage>
       <h1>Patio Calculator</h1>
 
-      <NumberInput
-        label="width"
-        placeholder="placeholder"
-        onInput={(x) => setFormData({ ...formData, width: x })}
-        value={formData.width}
-        error=""
-      />
+      <h2>Add Dimensions</h2>
+      <div className="flex items-center gap-4">
+        <TextInput label="new dim" onInput={(x) => setNewDimension(x)} value={newDimension} />
+        <TextInput
+          label="new dim unit"
+          onInput={(x) => setNewDimensionUnit(x)}
+          value={newDimensionUnit}
+        />
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setDimensions({ ...dimensions, [newDimension]: { unit: newDimensionUnit } });
+          }}
+        >
+          addDimension
+        </button>
+      </div>
+
+      <h2>Use Dimensions</h2>
+      {Object.entries(dimensions).map(([name, dimension]) => {
+        if (!name) return <></>;
+        return (
+          <NumberInput
+            key={name}
+            label={`${name} (${dimension.unit})`}
+            onInput={(x) => setFormData({ ...formData, [name]: x })}
+            value={formData[name] ?? 0}
+          />
+        );
+      })}
+
+      <pre>{JSON.stringify(dimensions, undefined, 2)}</pre>
+      <pre>{JSON.stringify(formData, undefined, 2)}</pre>
+      {/*
+      
+
       <NumberInput
         label="length"
         placeholder="placeholder"
@@ -113,6 +150,7 @@ export default function Home() {
           formData.width * formData.length * formData.fillDepth * 100 +
           formData.width * formData.length * 20}
       </h2>
+     */}
     </Typography>
   );
 }

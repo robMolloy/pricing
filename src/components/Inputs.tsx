@@ -3,9 +3,9 @@ import { FormEvent } from "react";
 export function TextInput(p: {
   onInput: (x: string) => void;
   value: string;
-  placeholder: string;
   label: React.ReactNode;
-  error: string;
+  placeholder?: string;
+  error?: string;
 }) {
   return (
     <div>
@@ -32,8 +32,8 @@ export function TextInput(p: {
 export function NumberInput(p: {
   onInput: (x: number) => void;
   value: number;
-  placeholder: string;
   label: React.ReactNode;
+  placeholder?: string;
   error?: string;
 }) {
   return (

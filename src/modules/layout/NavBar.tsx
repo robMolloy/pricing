@@ -69,10 +69,13 @@ export const NavBar = (p: TNavbarProps) => {
         </div>
       </div>
       <div className="hidden w-full gap-4 sm:flex">
-        <Link className="btn" href={"/"}>
+        <Link className="btn btn-ghost" href={"/"}>
           current
         </Link>
-        <Link className="btn" href={"/backup"}>
+        <Link className="btn btn-ghost" href={"/data-driven"}>
+          data-driven
+        </Link>
+        <Link className="btn btn-ghost" href={"/backup"}>
           backup
         </Link>
         {/* {showTabsInBar && (
