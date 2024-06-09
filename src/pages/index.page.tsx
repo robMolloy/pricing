@@ -1,44 +1,74 @@
 import { NumberInput, TextInput } from "@/components";
 import { Typography } from "@/components/Typography";
 import { useState } from "react";
+import { z } from "zod";
 
-const DisplayData = (
-  p: { material: string; qty: number; formula: string } & (
-    | { leftUnit: string }
-    | { rightUnit: string }
-  ),
-) => {
+const DisplayData = (p: {
+  material: string;
+  qty: number;
+  formula: string;
+  leftUnit?: string;
+  rightUnit?: string;
+}) => {
   return (
     <div className="flex items-baseline gap-4">
       <div className="tooltip" data-tip={p.formula}>
         <button className="btn btn-circle btn-info">i</button>
       </div>
       <p className="text-xl">
-        {p.material}: {p.qty} m^3
+        {p.material}: {p.leftUnit}
+        {p.qty} {p.rightUnit}
       </p>
     </div>
   );
 };
 
+function multiplyArray(arr: number[]) {
+  return arr.reduce((accumulator, currentValue) => accumulator * currentValue, 1);
+}
+function sumArray(arr: number[]) {
+  return arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+}
+type TDimensions = { [key: string]: { unit: string } };
+
+type TProcedure = {
+  [key: string]: {
+    dimensions: string[];
+    unit: string;
+    costPerUnit: number;
+  };
+};
+
 export default function Home() {
-  const [newDimension, setNewDimension] = useState("dsa");
-  const [newDimensionUnit, setNewDimensionUnit] = useState("m");
+  const [newDimension, setNewDimension] = useState("");
+  const [newDimensionUnit, setNewDimensionUnit] = useState("");
 
-  const [dimensions, setDimensions] = useState<{ [k: string]: { unit: string } }>({
-    width: {
-      unit: "m",
-    },
-  });
+  const [newProcedureName, setNewProcedureName] = useState("");
+  const [newProcedureUnit, setNewProcedureUnit] = useState("");
+  const [newProcedureCostPerUnit, setNewProcedureCostPerUnit] = useState(0);
 
-  const [formData, setFormData] = useState<{ [k in keyof typeof dimensions]: number }>({
-    width: 10,
-  });
+  const [newProcedureDimensions, setNewProcedureDimensions] = useState<string[]>([]);
 
-  // const [groups, setGroups] = useState([{ item: "width" }]);
+  const [formData, setFormData] = useState<{ [key: string]: number }>({});
+
+  const [dimensions, setDimensions] = useState<TDimensions>({});
+  const [procedures, setProcedures] = useState<TProcedure>({});
+  const dimensionKeys = Object.keys(dimensions) as string[];
+  const totalCost = sumArray(
+    Object.values(procedures).map((groupData) =>
+      multiplyArray([
+        ...groupData.dimensions.map((dimension) => formData[dimension]),
+        groupData.costPerUnit,
+      ]),
+    ),
+  );
   return (
     <Typography fullPage>
-      <h1>Patio Calculator</h1>
-
+      {/* <div className="flex gap-4">
+        <pre className="flex-1">{JSON.stringify({ dimensions }, undefined, 2)}</pre>
+        <pre className="flex-1">{JSON.stringify({ procedures }, undefined, 2)}</pre>
+        <pre className="flex-1">{JSON.stringify({ result: totalCost }, undefined, 2)}</pre>
+      </div> */}
       <h2>Add Dimensions</h2>
       <div className="flex items-center gap-4">
         <TextInput label="new dim" onInput={(x) => setNewDimension(x)} value={newDimension} />
@@ -51,106 +81,124 @@ export default function Home() {
           className="btn btn-primary"
           onClick={() => {
             setDimensions({ ...dimensions, [newDimension]: { unit: newDimensionUnit } });
+            setNewDimension("");
+            setNewDimensionUnit("");
           }}
         >
           addDimension
         </button>
       </div>
+      <h2>Add Procedures</h2>
+      <div className="flex items-center gap-4">
+        <TextInput
+          label="new procedure name"
+          onInput={(x) => setNewProcedureName(x)}
+          value={newProcedureName}
+        />
+        <NumberInput
+          label="new procedure costPerUnit"
+          onInput={(x) => setNewProcedureCostPerUnit(x)}
+          value={newProcedureCostPerUnit}
+        />
+        <TextInput
+          label="new procedure unit"
+          onInput={(x) => setNewProcedureUnit(x)}
+          value={newProcedureUnit}
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        {dimensionKeys.map((dimensionKey) => (
+          <button
+            key={`${dimensionKey}-procedure`}
+            className="btn btn-accent"
+            onClick={() => {
+              setNewProcedureDimensions([...newProcedureDimensions, dimensionKey]);
+            }}
+          >
+            {dimensionKey}
+          </button>
+        ))}
+        <button
+          className="btn btn-warning"
+          onClick={() => {
+            setNewProcedureDimensions([]);
+          }}
+        >
+          X
+        </button>
+        <div className="flex-1">
+          {newProcedureDimensions.length === 0 ? (
+            <div>Pick the dimensions used to create your job</div>
+          ) : (
+            newProcedureDimensions.join(" * ")
+          )}
+        </div>
+      </div>
+      <br />
+      <button
+        className="btn btn-primary"
+        onClick={() => {
+          setProcedures({
+            ...procedures,
+            [newProcedureName]: {
+              costPerUnit: newProcedureCostPerUnit,
+              dimensions: newProcedureDimensions,
+              unit: newProcedureUnit,
+            },
+          });
 
-      <h2>Use Dimensions</h2>
-      {Object.entries(dimensions).map(([name, dimension]) => {
-        if (!name) return <></>;
+          setNewProcedureCostPerUnit(0);
+          setNewProcedureDimensions([]);
+          setNewProcedureUnit("");
+          setNewProcedureName("");
+        }}
+      >
+        Add Procedure
+      </button>
+      <div className="flex items-center gap-4"></div>
+      <h2>Add measurements</h2>
+      {dimensionKeys.map((dimensionName) => {
         return (
           <NumberInput
-            key={name}
-            label={`${name} (${dimension.unit})`}
-            onInput={(x) => setFormData({ ...formData, [name]: x })}
-            value={formData[name] ?? 0}
+            key={dimensionName}
+            label={dimensionName}
+            onInput={(x) => setFormData({ ...formData, [dimensionName]: x })}
+            value={formData[dimensionName]}
           />
         );
       })}
-
-      <pre>{JSON.stringify(dimensions, undefined, 2)}</pre>
-      <pre>{JSON.stringify(formData, undefined, 2)}</pre>
-      {/*
-      
-
-      <NumberInput
-        label="length"
-        placeholder="placeholder"
-        onInput={(x) => setFormData({ ...formData, length: x })}
-        value={formData.length}
-        error=""
-      />
-      <NumberInput
-        label="excavation depth"
-        placeholder="placeholder"
-        onInput={(x) => setFormData({ ...formData, excavationDepth: x })}
-        value={formData.excavationDepth}
-        error=""
-      />
-      <NumberInput
-        label="fill depth"
-        placeholder="placeholder"
-        onInput={(x) => setFormData({ ...formData, fillDepth: x })}
-        value={formData.fillDepth}
-        error=""
-      />
-
       <div className="flex">
         <div className="flex-1">
           <h2>Amounts</h2>
 
-          <DisplayData
-            formula="formData.width * formData.length * formData.excavationDepth"
-            qty={formData.width * formData.length * formData.excavationDepth}
-            material="Fill"
-            rightUnit="m^3"
-          />
-          <DisplayData
-            formula="formData.width * formData.length * formData.fillDepth"
-            qty={formData.width * formData.length * formData.fillDepth}
-            material="Fill"
-            rightUnit="m^3"
-          />
-          <DisplayData
-            formula="formData.width * formData.length"
-            qty={formData.width * formData.length}
-            material="Stone"
-            rightUnit="m^2"
-          />
+          {Object.entries(procedures).map(([groupName, groupData]) => (
+            <DisplayData
+              key={`${groupName}-amount`}
+              formula={groupData.dimensions.join(" * ")}
+              qty={multiplyArray(groupData.dimensions.map((dimension) => formData[dimension]))}
+              material={groupName}
+              rightUnit={`m^${groupData.dimensions.length}`}
+            />
+          ))}
         </div>
 
         <div className="flex-1">
           <h2>Costs</h2>
-          <DisplayData
-            formula="formData.width * formData.length * formData.excavationDepth * 50"
-            qty={formData.width * formData.length * formData.excavationDepth * 50}
-            material="Excavation"
-            leftUnit="£"
-          />
-          <DisplayData
-            formula="formData.width * formData.length * formData.fillDepth * 100"
-            qty={formData.width * formData.length * formData.fillDepth * 100}
-            material="Fill"
-            leftUnit="£"
-          />
-
-          <DisplayData
-            formula="formData.width * formData.length * 20"
-            qty={formData.width * formData.length * 20}
-            material="Stone"
-            leftUnit="£"
-          />
+          {Object.entries(procedures).map(([groupName, groupData]) => (
+            <DisplayData
+              key={`${groupName}-costs`}
+              formula={[...groupData.dimensions, groupData.costPerUnit].join(" * ")}
+              qty={multiplyArray([
+                ...groupData.dimensions.map((dimension) => formData[dimension]),
+                groupData.costPerUnit,
+              ])}
+              material={groupName}
+              leftUnit="£"
+            />
+          ))}
         </div>
       </div>
-      <h2>
-        Total: £
-        {formData.width * formData.length * formData.excavationDepth * 50 +
-          formData.width * formData.length * formData.fillDepth * 100 +
-          formData.width * formData.length * 20}
-      </h2>
-     */}
+      <h2>Total: £{totalCost}</h2>
     </Typography>
   );
 }
