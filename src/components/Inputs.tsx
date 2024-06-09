@@ -6,7 +6,9 @@ export function TextInput(p: {
   label: React.ReactNode;
   placeholder?: string;
   error?: string;
+  bottomSlot?: boolean;
 }) {
+  const { bottomSlot = true } = p;
   return (
     <div>
       <label className="label">
@@ -23,9 +25,13 @@ export function TextInput(p: {
         }}
         value={p.value}
       />
-      <div className="label">
-        <span className={`badge badge-error w-full ${p.error ? "" : "opacity-0"}`}>{p.error}</span>
-      </div>
+      {(p.error || bottomSlot) && (
+        <div className="label">
+          <span className={`badge badge-error w-full ${p.error ? "" : "opacity-0"}`}>
+            {p.error}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -35,7 +41,9 @@ export function NumberInput(p: {
   label: React.ReactNode;
   placeholder?: string;
   error?: string;
+  bottomSlot?: boolean;
 }) {
+  const { bottomSlot = true } = p;
   return (
     <div>
       <label className="label">
@@ -52,7 +60,7 @@ export function NumberInput(p: {
         }}
         value={p.value}
       />
-      {p.error && (
+      {(p.error || bottomSlot) && (
         <div className="label">
           <span className={`badge badge-error w-full ${p.error ? "" : "opacity-0"}`}>
             {p.error}
