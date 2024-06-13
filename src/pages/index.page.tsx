@@ -75,7 +75,7 @@ export default function Home() {
           console.log(process.env.NEXT_PUBLIC_TEST_ENV_VAR_2);
         }}
       >
-        click me
+        click me 2
       </button>
       <h2>Add Dimensions</h2>
       <div className="flex items-center gap-4">
