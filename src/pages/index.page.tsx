@@ -69,6 +69,14 @@ export default function Home() {
         <pre className="flex-1">{JSON.stringify({ procedures }, undefined, 2)}</pre>
         <pre className="flex-1">{JSON.stringify({ result: totalCost }, undefined, 2)}</pre>
       </div> */}
+      <button
+        className="btn"
+        onClick={() => {
+          console.log(process.env.NEXT_PUBLIC_TEST_ENV_VAR);
+        }}
+      >
+        click me
+      </button>
       <h2>Add Dimensions</h2>
       <div className="flex items-center gap-4">
         <TextInput label="new dim" onInput={(x) => setNewDimension(x)} value={newDimension} />
