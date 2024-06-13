@@ -14,6 +14,7 @@ jobs:
       - run: npm ci && npm run build
         env:
           NEXT_PUBLIC_TEST_ENV_VAR: ${{ secrets.NEXT_PUBLIC_TEST_ENV_VAR }}
+          NEXT_PUBLIC_TEST_ENV_VAR_2: someNewValue
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

@@ -72,7 +72,7 @@ export default function Home() {
       <button
         className="btn"
         onClick={() => {
-          console.log(process.env.NEXT_PUBLIC_TEST_ENV_VAR);
+          console.log(process.env.NEXT_PUBLIC_TEST_ENV_VAR_2);
         }}
       >
         click me
